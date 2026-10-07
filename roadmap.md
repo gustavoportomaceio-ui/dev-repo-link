@@ -1,0 +1,13 @@
+# Roadmap
+- [x] Sistema base (pedidos, nota, agenda, clientes, produtos, serviços, WhatsApp)
+- [x] Etapas: arte, aprovação do cliente, impressão/acabamento, pronto p/ retirada
+- [x] Pagamento no pedido: pago / sinal recebido / pendente na retirada
+- [x] Calculadora rápida (lona/adesivo por m², impressões por folhas)
+- [x] Tabela de preços por faixas de quantidade (serviços, pedido, calculadora)
+- [x] Tela de Caixa: seleção de itens, cupom não fiscal, gráfico, agendados
+- [x] Tema escuro profissional preto e amarelo
+- [x] Produtos e serviços em lista selecionável no caixa e no pedido
+- [x] Logo removida das telas
+- [x] Login simples por senha
+- [x] Ativar Lovable Cloud
+- [x] Dados salvos na nuvem (clientes, itens, pedidos, loja)
