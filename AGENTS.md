@@ -11,6 +11,7 @@
 
 - Keep catalog selection in checkout and order forms tied to registered items, with quantity-based prices, so sales use consistent product/service data.
 - Define the screen theme and separate print receipt colors in semantic CSS tokens, so dark screens still produce readable paper receipts.
+- Render thermal receipts in a body portal with dedicated 58 mm print rules; why: print-hidden application shells must never hide the receipt.
 
 - Data lives in Lovable Cloud table app_state (one JSON row per store key), read/written only via server functions after the password session check; why: no user accounts, so RLS stays locked.
 - Password gate uses an encrypted session cookie (sessao.server.ts) checked server-side; why: password never reaches the browser.

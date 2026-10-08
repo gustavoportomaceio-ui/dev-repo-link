@@ -5,6 +5,7 @@
 - [x] Calculadora rápida (lona/adesivo por m², impressões por folhas)
 - [x] Tabela de preços por faixas de quantidade (serviços, pedido, calculadora)
 - [x] Tela de Caixa: seleção de itens, cupom não fiscal, gráfico, agendados
+- [x] Comprovante não fiscal para impressora térmica 58 mm
 - [x] Tema escuro profissional preto e amarelo
 - [x] Produtos e serviços em lista selecionável no caixa e no pedido
 - [x] Logo removida das telas

@@ -1,11 +1,10 @@
 import { useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { Minus, Plus, Printer, Search, Trash2, X, Package, Wrench, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { brl, dataBR, precoPorQtd, totalPedido, uid, STATUS, type Pedido, type PedidoItem, type Store } from "@/lib/store";
 
 const inp = "w-full rounded-md border border-input bg-card px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring";
-const btn = "inline-flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50";
-const btn2 = "inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm hover:bg-muted";
 const card = "rounded-lg border border-border bg-card p-5 text-card-foreground";
 const FORMAS = ["Dinheiro", "PIX", "Cartão de débito", "Cartão de crédito"];
 const hojeISO = () => new Date().toISOString().slice(0, 10);
@@ -213,26 +212,27 @@ export function Cupom({ s, p, fechar }: { s: Store; p: Pedido; fechar: () => voi
   const recebido = p.recebido ?? total;
   const d = new Date(p.criadoEm);
   const n2 = (v: number) => v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  const linha = "my-2 border-t border-foreground";
-  return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-foreground/40 p-4 print:static print:bg-transparent print:p-0">
-      <div className="mx-auto w-[80mm] max-w-full">
-        <div className="mb-3 flex justify-end gap-2 print:hidden">
-          <button className={btn} onClick={() => window.print()}><Printer className="h-4 w-4" />Imprimir</button>
-          <button className={btn2} onClick={fechar}><X className="h-4 w-4" />Fechar</button>
+  const linha = "my-2 border-t border-receipt-ink";
+  if (typeof document === "undefined") return null;
+  return createPortal(
+    <div className="thermal-receipt-overlay fixed inset-0 z-50 overflow-y-auto bg-foreground/40 p-4">
+      <div className="thermal-receipt-shell mx-auto w-[58mm] max-w-full">
+        <div className="thermal-receipt-actions mb-3 flex justify-end gap-2">
+          <Button onClick={() => window.print()}><Printer />Imprimir</Button>
+          <Button variant="outline" onClick={fechar}><X />Fechar</Button>
         </div>
-        <div className="bg-card px-4 py-5 font-mono text-[11px] leading-snug text-card-foreground shadow-xl print:shadow-none">
+        <div id="thermal-receipt" className="thermal-receipt bg-receipt-paper px-[3mm] py-[4mm] font-mono text-[10px] leading-tight text-receipt-ink shadow-xl">
           <div className="text-center">
-            <div className="text-base font-black uppercase">{s.loja.nome}</div>
+            <div className="break-words text-sm font-black uppercase">{s.loja.nome}</div>
             {s.loja.endereco && <div>{s.loja.endereco}</div>}
             {s.loja.telefone && <div>{s.loja.telefone}</div>}
           </div>
           {s.loja.doc && <div className="mt-1">CNPJ/CPF: {s.loja.doc}</div>}
           <div className={linha} />
           <div>CLIENTE: {(c?.nome || "Consumidor final").toUpperCase()}</div>
-          <div className="mt-1 flex items-end justify-between">
+          <div className="mt-1 flex items-end justify-between gap-2">
             <span>{d.toLocaleDateString("pt-BR")} {d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</span>
-            <span className="text-right"><span className="block text-[8px] font-bold">COMPROVANTE DE VENDA</span><span className="text-sm font-black">Nº {String(p.numero).padStart(6, "0")}</span></span>
+            <span className="shrink-0 text-right"><span className="block text-[7px] font-bold">COMPROVANTE DE VENDA</span><span className="text-xs font-black">Nº {String(p.numero).padStart(6, "0")}</span></span>
           </div>
           <div className={linha} />
           <div className="flex justify-between font-bold"><span>DESCRIÇÃO</span><span>R$ VALOR</span></div>
@@ -240,16 +240,16 @@ export function Cupom({ s, p, fechar }: { s: Store; p: Pedido; fechar: () => voi
           <div className="mt-1 space-y-1">
             {p.itens.map((i, k) => (
               <div key={k}>
-                <div className="font-bold uppercase">{i.nome}</div>
+                <div className="break-words font-bold uppercase">{i.nome}</div>
                 <div className="flex justify-between"><span className="pl-4">{i.qtd} x {n2(i.preco)}</span><span>{n2(i.qtd * i.preco)}</span></div>
               </div>
             ))}
           </div>
           <div className={linha} />
           {!!p.desconto && <div className="flex justify-between"><span>Desconto R$</span><span>-{n2(p.desconto)}</span></div>}
-          <div className="flex justify-between text-sm font-black"><span>Total da Nota R$</span><span>{n2(total)}</span></div>
-          <div className="flex justify-between text-sm"><span>Valor Recebido R$</span><span>{n2(recebido)}</span></div>
-          {recebido > total && <div className="flex justify-between text-sm"><span>Troco R$</span><span>{n2(recebido - total)}</span></div>}
+          <div className="flex justify-between text-xs font-black"><span>Total da Nota R$</span><span>{n2(total)}</span></div>
+          <div className="flex justify-between text-xs"><span>Valor Recebido R$</span><span>{n2(recebido)}</span></div>
+          {recebido > total && <div className="flex justify-between text-xs"><span>Troco R$</span><span>{n2(recebido - total)}</span></div>}
           <div className="mt-2 font-bold">FORMA DE PGTO.: {(p.forma || "À vista").toUpperCase()}</div>
           {p.entrega && <div className="mt-1 font-bold">PREVISÃO DE ENTREGA: {dataBR(p.entrega)}</div>}
           <div className={linha} />
@@ -260,6 +260,7 @@ export function Cupom({ s, p, fechar }: { s: Store; p: Pedido; fechar: () => voi
           <div className="text-center font-bold">* OBRIGADO E VOLTE SEMPRE *</div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

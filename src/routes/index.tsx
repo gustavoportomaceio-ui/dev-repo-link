@@ -8,7 +8,7 @@ import {
   useLojaStore, uid, brl, totalPedido, dataBR, STATUS, faixaDe, precoPorQtd,
   type Store, type Cliente, type Item, type Pedido, type Status, type Pagamento, type Faixa,
 } from "@/lib/store";
-import { Caixa } from "@/components/Caixa";
+import { Caixa, Cupom } from "@/components/Caixa";
 import { Login } from "@/components/Login";
 import { estaLogado, sair } from "@/lib/auth.functions";
 import { Button } from "@/components/ui/button";
@@ -343,6 +343,7 @@ function PedidoForm({ s, inicial, fechar, nota }: { s: Store; inicial: Pedido; f
 }
 
 function Nota({ s, p, fechar }: { s: Store; p: Pedido; fechar: () => void }) {
+  if (p.status !== "orcamento") return <Cupom s={s} p={p} fechar={fechar} />;
   const c = s.clientes.find((x) => x.id === p.clienteId);
   const sub = p.itens.reduce((a, i) => a + i.qtd * i.preco, 0);
   return (

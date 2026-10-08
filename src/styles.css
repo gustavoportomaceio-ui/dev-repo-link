@@ -59,6 +59,8 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-receipt-paper: var(--receipt-paper);
+  --color-receipt-ink: var(--receipt-ink);
 }
 
 :root {
@@ -149,14 +151,52 @@
 }
 
 /* Receipts remain legible on paper independently of the screen theme. */
-.fixed:has(.font-mono) { background: var(--overlay); }
-.fixed .font-mono, .print\:shadow-none {
+.thermal-receipt-overlay { background: var(--overlay); }
+.thermal-receipt {
+  overflow-wrap: anywhere;
   background: var(--receipt-paper);
   color: var(--receipt-ink);
-  --foreground: var(--receipt-ink);
-  --card: var(--receipt-paper);
-  --card-foreground: var(--receipt-ink);
 }
 @media print {
-  body { background: var(--receipt-paper); color: var(--receipt-ink); }
+  @page { size: 58mm auto; margin: 0; }
+
+  html,
+  body {
+    width: 58mm;
+    min-width: 58mm;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: var(--receipt-paper);
+    color: var(--receipt-ink);
+  }
+
+  body > *:not(.thermal-receipt-overlay) { display: none !important; }
+
+  .thermal-receipt-overlay {
+    position: static !important;
+    display: block !important;
+    width: 58mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: var(--receipt-paper) !important;
+  }
+
+  .thermal-receipt-shell,
+  .thermal-receipt {
+    width: 58mm !important;
+    max-width: 58mm !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .thermal-receipt-actions { display: none !important; }
+
+  .thermal-receipt {
+    padding: 3mm 3mm 5mm !important;
+    font-size: 9.5px !important;
+    line-height: 1.2 !important;
+    box-shadow: none !important;
+    print-color-adjust: exact;
+  }
 }
